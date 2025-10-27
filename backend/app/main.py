@@ -33,7 +33,7 @@ async def create_itinerary(request: schemas.ItineraryRequest):
 @app.post("/api/feedback", response_model=schemas.Feedback)
 async def create_feedback(feedback: schemas.FeedbackCreate, db: Session = Depends(get_db)):
     try:
-        result = await gemini_client.detect_translate_and_sentiment(feedback.text)
+        result = await gemini_client.detect_translate_and_sentiment(feedback.original_text)
         return crud.create_feedback(
             db=db,
             feedback=feedback,

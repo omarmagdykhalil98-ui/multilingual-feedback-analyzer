@@ -22,7 +22,7 @@ class Feedback(Base):
     detected_language = Column(String, nullable=True)
     translated_text = Column(Text, nullable=True)
     sentiment = Column(String, nullable=True)
-    metadata = Column(JSON, nullable=True)
+    meta_info = Column(JSON, nullable=True)  # renamed from metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 def init_db():

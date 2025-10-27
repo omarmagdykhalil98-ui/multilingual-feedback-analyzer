@@ -12,7 +12,7 @@ class Itinerary(BaseModel):
     itinerary: str
 
 class FeedbackBase(BaseModel):
-    text: str
+    original_text: str
     product_id: Optional[str] = None
     language: Optional[str] = None
 
@@ -21,8 +21,10 @@ class FeedbackCreate(FeedbackBase):
 
 class Feedback(FeedbackBase):
     id: int
+    detected_language: Optional[str] = None
     translated_text: Optional[str] = None
     sentiment: Optional[str] = None
+    meta_info: Optional[dict] = None
     created_at: datetime
 
     class Config:

@@ -1,14 +1,16 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 from typing import List, Optional
+from sqlalchemy import func
 
 def create_feedback(db: Session, feedback: schemas.FeedbackCreate, translated_text: str, sentiment: str, language: str) -> models.Feedback:
     db_feedback = models.Feedback(
-        original_text=feedback.text,
+        original_text=feedback.original_text,
         product_id=feedback.product_id,
         detected_language=language,
         translated_text=translated_text,
         sentiment=sentiment,
+        meta_info=None, # Not used for now
     )
     db.add(db_feedback)
     db.commit()
