@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
 from . import models, schemas
 from typing import List, Optional
-from sqlalchemy import func
 
-def create_feedback(db: Session, feedback: schemas.FeedbackCreate, translated_text: str, sentiment: str, language: str) -> models.Feedback:
+async def create_feedback(db: AsyncSession, feedback: schemas.FeedbackCreate, translated_text: str, sentiment: str, language: str) -> models.Feedback:
     db_feedback = models.Feedback(
         original_text=feedback.original_text,
         product_id=feedback.product_id,
@@ -13,31 +13,35 @@ def create_feedback(db: Session, feedback: schemas.FeedbackCreate, translated_te
         meta_info=None, # Not used for now
     )
     db.add(db_feedback)
-    db.commit()
-    db.refresh(db_feedback)
+    await db.commit()
+    await db.refresh(db_feedback)
     return db_feedback
 
-def get_feedback(
-    db: Session,
+async def get_feedback(
+    db: AsyncSession,
     product_id: Optional[str] = None,
     language: Optional[str] = None,
     sentiment: Optional[str] = None,
     page: int = 1,
     limit: int = 10,
 ) -> List[models.Feedback]:
-    query = db.query(models.Feedback)
+    query = select(models.Feedback)
 
     if product_id:
-        query = query.filter(models.Feedback.product_id == product_id)
+        query = query.where(models.Feedback.product_id == product_id)
     if language:
-        query = query.filter(models.Feedback.detected_language == language)
+        query = query.where(models.Feedback.detected_language == language)
     if sentiment:
-        query = query.filter(models.Feedback.sentiment == sentiment)
+        query = query.where(models.Feedback.sentiment == sentiment)
 
-    return query.offset((page - 1) * limit).limit(limit).all()
+    result = await db.execute(query.offset((page - 1) * limit).limit(limit))
+    return result.scalars().all()
 
-def get_feedback_stats(db: Session):
-    total = db.query(models.Feedback).count()
+async def get_feedback_stats(db: AsyncSession):
+    total_query = select(func.count(models.Feedback.id))
+    total_result = await db.execute(total_query)
+    total = total_result.scalar_one()
+
     if total == 0:
         return {
             "total": 0,
@@ -48,23 +52,29 @@ def get_feedback_stats(db: Session):
             "product_breakdown": {},
         }
 
-    positive_count = db.query(models.Feedback).filter(models.Feedback.sentiment == "Positive").count()
-    negative_count = db.query(models.Feedback).filter(models.Feedback.sentiment == "Negative").count()
-    neutral_count = db.query(models.Feedback).filter(models.Feedback.sentiment == "Neutral").count()
+    positive_count_query = select(func.count(models.Feedback.id)).where(models.Feedback.sentiment == "Positive")
+    positive_count_result = await db.execute(positive_count_query)
+    positive_count = positive_count_result.scalar_one()
 
-    language_breakdown = {}
-    for lang, count in db.query(models.Feedback.detected_language, func.count(models.Feedback.detected_language)).group_by(models.Feedback.detected_language):
-        language_breakdown[lang] = count
+    negative_count_query = select(func.count(models.Feedback.id)).where(models.Feedback.sentiment == "Negative")
+    negative_count_result = await db.execute(negative_count_query)
+    negative_count = negative_count_result.scalar_one()
+    
+    neutral_count = total - positive_count - negative_count
 
-    product_breakdown = {}
-    for prod_id, count in db.query(models.Feedback.product_id, func.count(models.Feedback.product_id)).filter(models.Feedback.product_id != None).group_by(models.Feedback.product_id):
-        product_breakdown[prod_id] = count
+    language_breakdown_query = select(models.Feedback.detected_language, func.count(models.Feedback.id)).group_by(models.Feedback.detected_language)
+    language_breakdown_result = await db.execute(language_breakdown_query)
+    language_breakdown = {lang: count for lang, count in language_breakdown_result}
+
+    product_breakdown_query = select(models.Feedback.product_id, func.count(models.Feedback.id)).where(models.Feedback.product_id != None).group_by(models.Feedback.product_id)
+    product_breakdown_result = await db.execute(product_breakdown_query)
+    product_breakdown = {prod_id: count for prod_id, count in product_breakdown_result}
 
     return {
         "total": total,
-        "positive_percentage": (positive_count / total) * 100,
-        "negative_percentage": (negative_count / total) * 100,
-        "neutral_percentage": (neutral_count / total) * 100,
+        "positive_percentage": (positive_count / total) * 100 if total > 0 else 0,
+        "negative_percentage": (negative_count / total) * 100 if total > 0 else 0,
+        "neutral_percentage": (neutral_count / total) * 100 if total > 0 else 0,
         "language_breakdown": language_breakdown,
         "product_breakdown": product_breakdown,
     }
