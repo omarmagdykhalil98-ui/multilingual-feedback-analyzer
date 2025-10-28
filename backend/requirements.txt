@@ -6,3 +6,4 @@ SQLAlchemy
 tenacity
 asyncpg
 pydantic==2.8.2
+packaging>=23.0
