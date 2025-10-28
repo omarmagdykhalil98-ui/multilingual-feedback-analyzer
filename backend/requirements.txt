@@ -5,3 +5,4 @@ google-generativeai
 SQLAlchemy
 tenacity
 asyncpg
+pydantic==2.8.2
