@@ -3,11 +3,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import schemas, crud, gemini_client, models
 import logging
 from typing import List, Optional
+import asyncio
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://shady-poltergeist-4jp945w67vj9cqpv7-3000.app.github.dev"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def on_startup():
@@ -30,7 +44,10 @@ async def create_itinerary(request: schemas.ItineraryRequest):
 @app.post("/api/feedback", response_model=schemas.Feedback)
 async def create_feedback(feedback: schemas.FeedbackCreate, db: AsyncSession = Depends(get_db)):
     try:
-        result = await gemini_client.detect_translate_and_sentiment(feedback.original_text)
+        # Run synchronous Gemini call in a thread-safe way
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, gemini_client.detect_translate_and_sentiment, feedback.original_text)
+
         return await crud.create_feedback(
             db=db,
             feedback=feedback,
