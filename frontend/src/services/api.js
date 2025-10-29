@@ -39,3 +39,5 @@ export const getFeedback = (params) => apiClient.get("/feedback", { params });
 export const createFeedback = (data) => apiClient.post("/feedback", data);
 export const getStats = () => apiClient.get("/stats");
 export const translateText = (data) => apiClient.post("/translate", data);
+export const getHealth = () => apiClient.get("/health");
+export const getModelName = () => apiClient.get("/model-name");

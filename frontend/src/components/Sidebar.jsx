@@ -1,0 +1,51 @@
+
+import { BarChart, MessageSquare, Settings } from 'lucide-react';
+
+const Sidebar = ({ setView }) => {
+  return (
+    <div className="w-64 bg-secondary text-white p-5 flex flex-col">
+      <div className="mb-10">
+        <h1 className="text-2xl font-bold">Feedback Analyzer</h1>
+      </div>
+      <nav className="flex-grow">
+        <ul>
+          <li className="mb-4">
+            <a
+              href="#"
+              className="flex items-center p-2 text-base font-normal text-gray-300 rounded-lg hover:bg-gray-700"
+              onClick={() => setView('submit')}
+            >
+              <MessageSquare />
+              <span className="ml-3">Submit Feedback</span>
+            </a>
+          </li>
+          <li className="mb-4">
+            <a
+              href="#"
+              className="flex items-center p-2 text-base font-normal text-gray-300 rounded-lg hover:bg-gray-700"
+              onClick={() => setView('analytics')}
+            >
+              <BarChart />
+              <span className="ml-3">Analytics</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              className="flex items-center p-2 text-base font-normal text-gray-300 rounded-lg hover:bg-gray-700"
+              onClick={() => setView('settings')}
+            >
+              <Settings />
+              <span className="ml-3">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div className="text-center text-xs text-gray-500">
+        <p>© 2025 Powered by Gemini + FastAPI</p>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
