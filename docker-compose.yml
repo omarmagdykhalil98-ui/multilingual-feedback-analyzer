@@ -28,8 +28,9 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      - FRONTEND_URL=${CODESPACE_NAME:+https://${CODESPACE_NAME}-3000.app.github.dev}
-      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - CODESPACE_NAME=${CODESPACE_NAME}
+      - CODESPACES=${CODESPACES}
+      - GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN=${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}
     command: >
       sh -c "sleep 5 && uvicorn app.main:app --host 0.0.0.0 --port 80 --reload"
 

@@ -12,22 +12,26 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# --- ✅ Dynamic, Multi-Environment CORS configuration ---
+# --- ✅ UNIVERSAL CORS CONFIGURATION ---
 allowed_origins = {"http://localhost:3000", "http://127.0.0.1:3000"}
 
-# 1️⃣ Detect Codespaces environment correctly
+# Detect GitHub Codespace environment
 codespace_name = os.getenv("CODESPACE_NAME")
 if codespace_name:
-    # GitHub Codespaces always uses this domain pattern
     codespace_origin = f"https://{codespace_name}-3000.app.github.dev"
     allowed_origins.add(codespace_origin)
     logger.info(f"🧩 Detected Codespace: {codespace_origin}")
 
-# 2️⃣ Allow manually set frontend URL (for production)
+# Fallback: use FRONTEND_URL from .env if defined
 frontend_url = os.getenv("FRONTEND_URL")
 if frontend_url:
     allowed_origins.add(frontend_url)
     logger.info(f"🌍 Added custom FRONTEND_URL: {frontend_url}")
+
+# Final safety net: allow any .app.github.dev (useful when CODESPACE_NAME not detected)
+if os.getenv("CODESPACES", "false").lower() == "true":
+    allowed_origins.add("https://*.app.github.dev")
+    logger.info("🛠️ Added wildcard for GitHub Codespaces *.app.github.dev")
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,15 +43,18 @@ app.add_middleware(
 
 logger.info(f"🔒 Allowed CORS origins: {allowed_origins}")
 
+
 # --- Startup ---
 @app.on_event("startup")
 async def on_startup():
     await models.init_db()
 
+
 # --- Dependency ---
 async def get_db() -> AsyncSession:
     async with models.SessionLocal() as session:
         yield session
+
 
 # --- Endpoints ---
 @app.post("/generate-itinerary/", response_model=schemas.Itinerary)
@@ -59,10 +66,17 @@ async def create_itinerary(request: schemas.ItineraryRequest):
         logger.error(f"Error creating itinerary: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate itinerary.")
 
+
 @app.post("/api/feedback", response_model=schemas.Feedback)
 async def create_feedback(feedback: schemas.FeedbackCreate, db: AsyncSession = Depends(get_db)):
     try:
-        result = await gemini_client.detect_translate_and_sentiment(feedback.original_text)
+        # Run the sync Gemini call in a background thread (non-blocking)
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(
+            None,
+            lambda: gemini_client.detect_translate_and_sentiment(feedback.original_text)
+        )
+
         return await crud.create_feedback(
             db=db,
             feedback=feedback,
@@ -70,6 +84,7 @@ async def create_feedback(feedback: schemas.FeedbackCreate, db: AsyncSession = D
             sentiment=result["sentiment"],
             language=result["detected_language"],
         )
+
     except Exception as e:
         logger.error(f"Error creating feedback: {e}")
         raise HTTPException(status_code=500, detail="Failed to process feedback.")
@@ -88,6 +103,7 @@ async def get_feedback(
     except Exception as e:
         logger.error(f"Error getting feedback: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve feedback.")
+
 
 @app.get("/api/stats")
 async def get_stats(db: AsyncSession = Depends(get_db)):
