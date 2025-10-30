@@ -23,7 +23,7 @@ const Analytics = ({ feedback, stats, setView }) => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8 dark:bg-dark-background transition-colors duration-300">
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
         <h2 className="text-2xl font-semibold text-gray-900">
@@ -32,12 +32,12 @@ const Analytics = ({ feedback, stats, setView }) => {
         <div className="flex gap-3">
           <button
             onClick={() => setView("submit")}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md shadow-soft hover:bg-primaryDark transition"
           >
             <Plus size={16} />
             Add Feedback
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100">
+            <button className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition">
             <Download size={16} />
             Export CSV
           </button>
@@ -68,7 +68,7 @@ const Analytics = ({ feedback, stats, setView }) => {
       </div>
 
       {/* Charts */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-8">
+      <div className="bg-surface dark:bg-dark-surface p-6 rounded-xl shadow-soft hover:shadow-glow transition-shadow mb-8">
         <AnalyticsCharts stats={stats} />
       </div>
 
