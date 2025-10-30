@@ -7,10 +7,9 @@ import AnalyticsCharts from "../components/AnalyticsCharts";
 const Analytics = ({ feedback, stats, setView }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [productFilter, setProductFilter] = useState("");
+  const [languageFilter, setLanguageFilter] = useState(""); // New state
+  const [sentimentFilter, setSentimentFilter] = useState(""); // New state
 
-  const productData = Object.entries(stats?.product_breakdown || {}).map(
-    ([name, value]) => ({ name, value })
-  );
 
   const exportToCsv = () => {
     const csv = Papa.unparse(filteredFeedback); // Use filteredFeedback
@@ -27,13 +26,15 @@ const Analytics = ({ feedback, stats, setView }) => {
 
   const filteredFeedback = feedback.filter((item) => {
     if (!item) return false; 
-    const original = item.original_text?.toLowerCase() || "";
-    const translated = item.translated_text?.toLowerCase() || "";
+    const original = item.text?.toLowerCase() || ""; // Changed from item.original_text
     const search = searchTerm.toLowerCase();
-    return (
-      (original.includes(search) || translated.includes(search)) &&
-      (productFilter ? item.product_id === productFilter : true)
-    );
+
+    const matchesSearch = original.includes(search);
+    const matchesProduct = productFilter ? item.product_id === productFilter : true;
+    const matchesLanguage = languageFilter ? item.detected_language === languageFilter : true;
+    const matchesSentiment = sentimentFilter ? item.sentiment === sentimentFilter : true;
+
+    return matchesSearch && matchesProduct && matchesLanguage && matchesSentiment;
   });
 
   return (
@@ -91,29 +92,18 @@ const Analytics = ({ feedback, stats, setView }) => {
 
       {/* Filters + Table */}
       <div className="bg-white p-6 rounded-xl shadow-sm">
-        <div className="flex flex-wrap justify-between items-center mb-4 gap-3">
-          <input
-            type="text"
-            placeholder="Search feedback..."
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
-            value={productFilter}
-            onChange={(e) => setProductFilter(e.target.value)}
-          >
-            <option value="">All Products</option>
-            {productData.map((p) => (
-              <option key={p.name} value={p.name}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <FeedbackTable feedback={filteredFeedback} />
+        <FeedbackTable
+          feedback={filteredFeedback}
+          stats={stats} // Pass stats for filter options
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          productFilter={productFilter}
+          setProductFilter={setProductFilter}
+          languageFilter={languageFilter}
+          setLanguageFilter={setLanguageFilter}
+          sentimentFilter={sentimentFilter}
+          setSentimentFilter={setSentimentFilter}
+        />
       </div>
     </div>
   );

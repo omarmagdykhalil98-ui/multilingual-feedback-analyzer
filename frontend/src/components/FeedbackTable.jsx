@@ -1,6 +1,21 @@
 import React from "react";
 
-const FeedbackTable = ({ feedback }) => {
+const FeedbackTable = ({
+  feedback,
+  stats,
+  searchTerm,
+  setSearchTerm,
+  productFilter,
+  setProductFilter,
+  languageFilter,
+  setLanguageFilter,
+  sentimentFilter,
+  setSentimentFilter,
+}) => {
+  const productData = Object.entries(stats?.product_breakdown || {}).map(
+    ([name, value]) => ({ name, value })
+  );
+
   const getSentimentClass = (sentiment) => {
     switch (sentiment) {
       case "Positive":
@@ -13,7 +28,6 @@ const FeedbackTable = ({ feedback }) => {
         return "bg-gray-300 text-gray-800";
     }
   };
-
   return (
     <div className="bg-white dark:bg-dark-card shadow-md rounded-xl transition-all duration-300">
       <div className="border-t border-gray-200 dark:border-gray-700">
@@ -59,6 +73,61 @@ const FeedbackTable = ({ feedback }) => {
                     >
                       Timestamp
                     </th>
+                  </tr>
+                  <tr>
+                    <th className="px-6 py-3">
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 w-full"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </th>
+                    <th className="px-6 py-3"></th> {/* Translated Text - No filter for now */}
+                    <th className="px-6 py-3">
+                      <select
+                        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 w-full"
+                        value={productFilter}
+                        onChange={(e) => setProductFilter(e.target.value)}
+                      >
+                        <option value="">All</option>
+                        {productData.map((p) => (
+                          <option key={p.name} value={p.name}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+                    </th>
+                    <th className="px-6 py-3">
+                      <select
+                        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 w-full"
+                        value={languageFilter}
+                        onChange={(e) => setLanguageFilter(e.target.value)}
+                      >
+                        <option value="">All</option>
+                        {Object.keys(stats?.language_breakdown || {}).map((lang) => (
+                          <option key={lang} value={lang}>
+                            {lang}
+                          </option>
+                        ))}
+                      </select>
+                    </th>
+                    <th className="px-6 py-3">
+                      <select
+                        className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 w-full"
+                        value={sentimentFilter}
+                        onChange={(e) => setSentimentFilter(e.target.value)}
+                      >
+                        <option value="">All</option>
+                        {["Positive", "Negative", "Neutral"].map((sentiment) => (
+                          <option key={sentiment} value={sentiment}>
+                            {sentiment}
+                          </option>
+                        ))}
+                      </select>
+                    </th>
+                    <th className="px-6 py-3"></th> {/* Timestamp - No filter for now */}
                   </tr>
                 </thead>
 
