@@ -52,8 +52,8 @@ const Analytics = ({ feedback, stats, setView }) => {
             Add Feedback
           </button>
           <button
-            onClick={exportToCsv} // Call the new exportToCsv function
-            className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition"
+            onClick={exportToCsv}
+            className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition active:scale-95"
           >
             <Download size={16} />
             Export CSV
