@@ -33,7 +33,7 @@ const SubmitFeedback = ({ onFeedbackSubmitted }) => {
 
   return (
     <div className="p-8 bg-background">
-      <div className="bg-white p-8 rounded-lg shadow-md">
+      <div className="bg-card p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-secondary">Submit Feedback</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -45,7 +45,7 @@ const SubmitFeedback = ({ onFeedbackSubmitted }) => {
                 id="feedback"
                 name="feedback"
                 rows={4}
-                className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-200 rounded-md"
+                className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 required
@@ -60,7 +60,7 @@ const SubmitFeedback = ({ onFeedbackSubmitted }) => {
             <select
               id="product"
               name="product"
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-200 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
               value={productId}
               onChange={(e) => setProductId(e.target.value)}
             >

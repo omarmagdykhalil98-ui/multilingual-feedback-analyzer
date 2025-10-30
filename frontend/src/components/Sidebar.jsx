@@ -1,13 +1,7 @@
 
 import { BarChart, MessageSquare, Settings } from 'lucide-react';
 
-const Sidebar = ({ setView, view }) => {
-  const getLinkClass = (tabName) => {
-    return `flex items-center p-2 text-base font-normal text-gray-400 rounded-lg hover:bg-primary-dark ${
-      view === tabName ? 'bg-primary-dark' : ''
-    }`;
-  };
-
+const Sidebar = ({ setView }) => {
   return (
     <div className="w-64 bg-secondary text-white p-5 flex flex-col">
       <div className="mb-10">
@@ -18,7 +12,7 @@ const Sidebar = ({ setView, view }) => {
           <li className="mb-4">
             <a
               href="#"
-              className={getLinkClass('submit')}
+              className="flex items-center p-2 text-base font-normal text-gray-300 rounded-lg hover:bg-gray-700"
               onClick={() => setView('submit')}
             >
               <MessageSquare />
@@ -28,7 +22,7 @@ const Sidebar = ({ setView, view }) => {
           <li className="mb-4">
             <a
               href="#"
-              className={getLinkClass('analytics')}
+              className="flex items-center p-2 text-base font-normal text-gray-300 rounded-lg hover:bg-gray-700"
               onClick={() => setView('analytics')}
             >
               <BarChart />
@@ -38,7 +32,7 @@ const Sidebar = ({ setView, view }) => {
           <li>
             <a
               href="#"
-              className={getLinkClass('settings')}
+              className="flex items-center p-2 text-base font-normal text-gray-300 rounded-lg hover:bg-gray-700"
               onClick={() => setView('settings')}
             >
               <Settings />
@@ -47,7 +41,7 @@ const Sidebar = ({ setView, view }) => {
           </li>
         </ul>
       </nav>
-      <div className="text-center text-xs text-gray-400">
+      <div className="text-center text-xs text-gray-500">
         <p>© 2025 Powered by Gemini + FastAPI</p>
       </div>
     </div>
