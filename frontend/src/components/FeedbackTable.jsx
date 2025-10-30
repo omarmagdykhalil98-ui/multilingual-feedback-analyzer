@@ -1,63 +1,133 @@
-
-import React from 'react';
+import React from "react";
 
 const FeedbackTable = ({ feedback }) => {
-
   const getSentimentClass = (sentiment) => {
     switch (sentiment) {
-      case 'Positive':
-        return 'bg-success text-white';
-      case 'Negative':
-        return 'bg-error text-white';
+      case "Positive":
+        return "bg-green-500 text-white";
+      case "Negative":
+        return "bg-red-500 text-white";
+      case "Neutral":
+        return "bg-gray-400 text-white";
       default:
-        return 'bg-neutral text-white';
+        return "bg-gray-300 text-gray-800";
     }
   };
 
   return (
-    <div className="bg-card shadow-md rounded-lg">
-        <div className="border-t border-gray-200">
-            <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-background dark:bg-dark-surface">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Original Text</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Translated Text</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Product</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Language</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Sentiment</th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-card divide-y divide-gray-200">
-                                {feedback.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary dark:text-dark-textSecondary">{item.original_text}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary dark:text-dark-textSecondary">{item.translated_text}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary dark:text-dark-textSecondary">{item.product_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary dark:text-dark-textSecondary">
-                                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            {item.detected_language}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSentimentClass(item.sentiment)}`}>
-                                            {item.sentiment}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary dark:text-dark-textSecondary">{new Date(item.created_at).toLocaleString()}</td>
-                                </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div className="bg-white dark:bg-dark-card shadow-md rounded-xl transition-all duration-300">
+      <div className="border-t border-gray-200 dark:border-gray-700">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div className="shadow overflow-hidden border-b border-gray-200 dark:border-gray-700 sm:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-100 dark:bg-dark-surface">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Original Text
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Translated Text
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Product
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Language
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Sentiment
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Timestamp
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="bg-white dark:bg-dark-card divide-y divide-gray-200 dark:divide-gray-700">
+                  {feedback && feedback.length > 0 ? (
+                    feedback.map((item) => (
+                      <tr
+                        key={item.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                      >
+                        {/* Original Text (backend field: text) */}
+                        <td className="px-6 py-4 whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200">
+                          {item.text || "(No text provided)"}
+                        </td>
+
+                        {/* Translated Text */}
+                        <td className="px-6 py-4 whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
+                          {item.translated_text || "-"}
+                        </td>
+
+                        {/* Product */}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                          {item.product_id || "-"}
+                        </td>
+
+                        {/* Language */}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                            {item.detected_language || "-"}
+                          </span>
+                        </td>
+
+                        {/* Sentiment */}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <span
+                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getSentimentClass(
+                              item.sentiment
+                            )}`}
+                          >
+                            {item.sentiment || "Unknown"}
+                          </span>
+                        </td>
+
+                        {/* Timestamp */}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                          {item.created_at
+                            ? new Date(item.created_at).toLocaleString()
+                            : "-"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="text-center py-6 text-gray-500 dark:text-gray-400"
+                      >
+                        No feedback data available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
       </div>
-  )
-}
+    </div>
+  );
+};
 
 export default FeedbackTable;
