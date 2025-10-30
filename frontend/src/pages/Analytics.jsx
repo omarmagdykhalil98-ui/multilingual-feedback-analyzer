@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Papa from 'papaparse';
 import { Plus, Download, Smile, Frown, Meh } from "lucide-react";
 import FeedbackTable from "../components/FeedbackTable";
 import AnalyticsCharts from "../components/AnalyticsCharts";
@@ -10,6 +11,19 @@ const Analytics = ({ feedback, stats, setView }) => {
   const productData = Object.entries(stats?.product_breakdown || {}).map(
     ([name, value]) => ({ name, value })
   );
+
+  const exportToCsv = () => {
+    const csv = Papa.unparse(filteredFeedback); // Use filteredFeedback
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'feedback.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const filteredFeedback = feedback.filter((item) => {
     if (!item) return false; 
@@ -37,7 +51,10 @@ const Analytics = ({ feedback, stats, setView }) => {
             <Plus size={16} />
             Add Feedback
           </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition">
+          <button
+            onClick={exportToCsv} // Call the new exportToCsv function
+            className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition"
+          >
             <Download size={16} />
             Export CSV
           </button>
