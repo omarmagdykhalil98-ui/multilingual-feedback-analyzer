@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Papa from 'papaparse';
 import { Plus, Download, Smile, Frown, Meh } from "lucide-react";
 import FeedbackTable from "../components/FeedbackTable";
 import AnalyticsCharts from "../components/AnalyticsCharts";
@@ -10,6 +11,19 @@ const Analytics = ({ feedback, stats, setView }) => {
   const productData = Object.entries(stats?.product_breakdown || {}).map(
     ([name, value]) => ({ name, value })
   );
+
+  const exportToCsv = () => {
+    const csv = Papa.unparse(feedback);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'feedback.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const filteredFeedback = feedback.filter((item) => {
     if (!item) return false; 
@@ -23,21 +37,21 @@ const Analytics = ({ feedback, stats, setView }) => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
-        <h2 className="text-2xl font-semibold text-gray-900">
+        <h2 className="text-2xl font-semibold text-text-primary">
           Analytics Dashboard
         </h2>
         <div className="flex gap-3">
           <button
             onClick={() => setView("submit")}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
           >
             <Plus size={16} />
             Add Feedback
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100">
+          <button onClick={exportToCsv} className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-200">
             <Download size={16} />
             Export CSV
           </button>
@@ -50,20 +64,20 @@ const Analytics = ({ feedback, stats, setView }) => {
         <StatCard
           title="Positive"
           value={stats?.sentiment_breakdown?.Positive || 0}
-          color="text-green-600"
-          icon={<Smile className="text-green-500" />}
+          color="text-accent"
+          icon={<Smile className="text-accent" />}
         />
         <StatCard
           title="Negative"
           value={stats?.sentiment_breakdown?.Negative || 0}
-          color="text-red-600"
-          icon={<Frown className="text-red-500" />}
+          color="text-error"
+          icon={<Frown className="text-error" />}
         />
         <StatCard
           title="Neutral"
           value={stats?.sentiment_breakdown?.Neutral || 0}
-          color="text-gray-600"
-          icon={<Meh className="text-gray-500" />}
+          color="text-secondary"
+          icon={<Meh className="text-secondary" />}
         />
       </div>
 
@@ -78,12 +92,12 @@ const Analytics = ({ feedback, stats, setView }) => {
           <input
             type="text"
             placeholder="Search feedback..."
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
+            className="border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <select
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500"
+            className="border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary"
             value={productFilter}
             onChange={(e) => setProductFilter(e.target.value)}
           >
@@ -102,10 +116,10 @@ const Analytics = ({ feedback, stats, setView }) => {
   );
 };
 
-const StatCard = ({ title, value, color = "text-gray-800", icon }) => (
+const StatCard = ({ title, value, color = "text-text-primary", icon }) => (
   <div className="bg-white p-6 rounded-xl shadow-sm flex justify-between items-center">
     <div>
-      <h3 className="text-sm text-gray-500">{title}</h3>
+      <h3 className="text-sm text-secondary">{title}</h3>
       <p className={`text-3xl font-bold ${color}`}>{value}</p>
     </div>
     {icon && <div className="text-3xl">{icon}</div>}
