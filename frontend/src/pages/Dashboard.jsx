@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import SubmitFeedback from './SubmitFeedback';
 import Analytics from './Analytics';
 import Settings from './Settings';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = ({ feedback, stats, onFeedbackSubmitted }) => {

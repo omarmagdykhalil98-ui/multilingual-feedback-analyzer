@@ -78,9 +78,23 @@ async def get_feedback_stats(db: AsyncSession):
     product_breakdown_result = await db.execute(product_breakdown_query)
     product_breakdown = {prod_id: count for prod_id, count in product_breakdown_result}
 
+    sentiment_by_product_query = select(
+        models.Feedback.product_id,
+        models.Feedback.sentiment,
+        func.count(models.Feedback.id)
+    ).group_by(models.Feedback.product_id, models.Feedback.sentiment).where(models.Feedback.product_id != None)
+    sentiment_by_product_result = await db.execute(sentiment_by_product_query)
+
+    sentiment_breakdown_by_product = {}
+    for product_id, sentiment, count in sentiment_by_product_result:
+        if product_id not in sentiment_breakdown_by_product:
+            sentiment_breakdown_by_product[product_id] = {"Positive": 0, "Negative": 0, "Neutral": 0}
+        sentiment_breakdown_by_product[product_id][sentiment] = count
+
     return {
         "total": total,
         "sentiment_breakdown": sentiment_breakdown,
         "language_breakdown": language_breakdown,
         "product_breakdown": product_breakdown,
+        "sentiment_breakdown_by_product": sentiment_breakdown_by_product,
     }
