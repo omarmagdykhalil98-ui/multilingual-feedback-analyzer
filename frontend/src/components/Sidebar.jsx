@@ -1,11 +1,8 @@
 import { BarChart, MessageSquare, Settings } from 'lucide-react';
-import { useState } from 'react';
 
-const Sidebar = ({ setView }) => {
-  const [activeTab, setActiveTab] = useState('submit');
+const Sidebar = ({ view, setView }) => {
 
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
     setView(tab);
   };
 
@@ -32,7 +29,7 @@ const Sidebar = ({ setView }) => {
             onClick={() => handleTabClick(item.id)}
             className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
               ${
-                activeTab === item.id
+                view === item.id
                   ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md'
                   : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}

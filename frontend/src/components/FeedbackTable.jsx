@@ -140,7 +140,7 @@ const FeedbackTable = ({
                       >
                         {/* Original Text (backend field: text) */}
                         <td className="px-6 py-4 whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200">
-                          {item.text || "(No text provided)"}
+                          {item.original_text || item.text || "(No text provided)"}
                         </td>
 
                         {/* Translated Text */}

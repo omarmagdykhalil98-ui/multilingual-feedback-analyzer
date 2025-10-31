@@ -43,6 +43,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules  # prevents overwriting node_modules from host
+      - postgres_data:/var/lib/postgresql/data/
+
     environment:
       - CHOKIDAR_USEPOLLING=true     # enables file watching on WSL/Windows
       - WATCHPACK_POLLING=true

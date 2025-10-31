@@ -10,23 +10,57 @@ const Analytics = ({ feedback, stats, setView }) => {
   const [languageFilter, setLanguageFilter] = useState(""); // New state
   const [sentimentFilter, setSentimentFilter] = useState(""); // New state
 
+const exportToCsv = () => {
+  // 1️⃣ Filter and normalize data fields
+  const filteredData = filteredFeedback.map(
+    ({
+      id,
+      product_id,
+      text,
+      original_text,
+      translated_text,
+      detected_language,
+      sentiment,
+      created_at,
+    }) => ({
+      ID: id,
+      "Product ID": product_id,
+      "Original Text": original_text || text || "", // ✅ fallback fix
+      "Translated Text": translated_text || "",
+      "Detected Language": detected_language || "",
+      Sentiment: sentiment || "",
+      "Created At": new Date(created_at).toLocaleString(),
+    })
+  );
 
-  const exportToCsv = () => {
-    const csv = Papa.unparse(filteredFeedback); // Use filteredFeedback
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'feedback.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // 2️⃣ Convert to CSV with readable headers
+  const csv = Papa.unparse(filteredData);
+
+  // 3️⃣ Create timestamped file name (e.g. feedback_2025_10_30_18_45.csv)
+  const timestamp = new Date()
+    .toISOString()
+    .replace(/[-:]/g, "_")
+    .replace("T", "_")
+    .split(".")[0];
+  const filename = `feedback_${timestamp}.csv`;
+
+  // 4️⃣ Trigger browser download
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
 
   const filteredFeedback = feedback.filter((item) => {
     if (!item) return false; 
-    const original = item.text?.toLowerCase() || ""; // Changed from item.original_text
+    const original = (item.original_text || item.text)?.toLowerCase() || ""; // Changed from item.original_text
     const search = searchTerm.toLowerCase();
 
     const matchesSearch = original.includes(search);
