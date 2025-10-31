@@ -1,4 +1,5 @@
 import React from "react";
+import { getFullLanguageName } from "../utils/languageUtils";
 
 const FeedbackTable = ({
   feedback,
@@ -108,7 +109,7 @@ const FeedbackTable = ({
                         <option value="">All</option>
                         {Object.keys(stats?.language_breakdown || {}).map((lang) => (
                           <option key={lang} value={lang}>
-                            {lang}
+                            {getFullLanguageName(lang)}
                           </option>
                         ))}
                       </select>
@@ -156,7 +157,7 @@ const FeedbackTable = ({
                         {/* Language */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                            {item.detected_language || "-"}
+                            {getFullLanguageName(item.detected_language) || "-"}
                           </span>
                         </td>
 

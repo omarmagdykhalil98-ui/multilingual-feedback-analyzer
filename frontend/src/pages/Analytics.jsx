@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Papa from 'papaparse';
+import { getFullLanguageName } from "../utils/languageUtils";
 import { Plus, Download, Smile, Frown, Meh } from "lucide-react";
 import FeedbackTable from "../components/FeedbackTable";
 import AnalyticsCharts from "../components/AnalyticsCharts";
@@ -27,7 +28,7 @@ const exportToCsv = () => {
       "Product ID": product_id,
       "Original Text": original_text || text || "", // ✅ fallback fix
       "Translated Text": translated_text || "",
-      "Detected Language": detected_language || "",
+      "Detected Language": getFullLanguageName(detected_language) || "",
       Sentiment: sentiment || "",
       "Created At": new Date(created_at).toLocaleString(),
     })
