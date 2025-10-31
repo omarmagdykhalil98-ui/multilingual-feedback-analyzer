@@ -36,26 +36,30 @@ const SubmitFeedback = ({ onFeedbackSubmitted }) => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Feedback Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+            <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Feedback
             </label>
             <textarea
+              id="feedback"
+              name="feedback"
               rows={4}
+              required
               className="mt-2 w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3
                          text-gray-800 dark:text-gray-100 bg-white dark:bg-dark-card
                          focus:ring-2 focus:ring-teal-500 focus:outline-none"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              required
             />
           </div>
 
           {/* Product Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+            <label htmlFor="product" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Product
             </label>
             <select
+              id="product"
+              name="product"
               className="mt-2 w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3
                          text-gray-800 dark:text-gray-100 bg-white dark:bg-dark-card
                          focus:ring-2 focus:ring-teal-500 focus:outline-none"
