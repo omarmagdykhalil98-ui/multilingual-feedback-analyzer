@@ -57,14 +57,21 @@ async def get_db() -> AsyncSession:
 
 
 # --- Endpoints ---
+def get_gemini_client():
+    return gemini_client.detect_translate_and_sentiment
+
 @app.post("/api/feedback", response_model=schemas.Feedback)
-async def create_feedback(feedback: schemas.FeedbackCreate, db: AsyncSession = Depends(get_db)):
+async def create_feedback(
+    feedback: schemas.FeedbackCreate,
+    db: AsyncSession = Depends(get_db),
+    gemini_func: callable = Depends(get_gemini_client)
+):
     try:
         # Run the sync Gemini call in a background thread (non-blocking)
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             None,
-            lambda: gemini_client.detect_translate_and_sentiment(feedback.original_text)
+            lambda: gemini_func(feedback.original_text)
         )
 
         return await crud.create_feedback(
