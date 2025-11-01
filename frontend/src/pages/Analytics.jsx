@@ -87,13 +87,6 @@ const exportToCsv = () => {
             <Plus size={16} />
             Add Feedback
           </button>
-          <button
-            onClick={exportToCsv}
-            className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition active:scale-95"
-          >
-            <Download size={16} />
-            Export CSV
-          </button>
         </div>
       </div>
 
@@ -127,6 +120,15 @@ const exportToCsv = () => {
 
       {/* Filters + Table */}
       <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={exportToCsv}
+            className="flex items-center gap-2 px-4 py-2 border border-neutral rounded-md hover:bg-accent hover:text-gray-900 transition active:scale-95"
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
+        </div>
         <FeedbackTable
           feedback={filteredFeedback}
           stats={stats} // Pass stats for filter options

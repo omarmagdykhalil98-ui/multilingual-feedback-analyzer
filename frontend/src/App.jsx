@@ -9,8 +9,19 @@ function App() {
   const [mounted, setMounted] = useState(false);
 
   const fetchFeedback = async () => {
-    const response = await getFeedback();
-    setFeedback(response.data);
+    let allFeedback = [];
+    let page = 1;
+    const limit = 100;
+    while (true) {
+      const response = await getFeedback({ page, limit });
+      const data = response.data;
+      allFeedback = [...allFeedback, ...data];
+      if (data.length < limit) {
+        break;
+      }
+      page++;
+    }
+    setFeedback(allFeedback);
   };
 
   const fetchStats = async () => {
