@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SubmitFeedback from '../pages/SubmitFeedback';
 import * as api from '../services/api';
-import { describe, it, expect, vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 
 vi.mock('../services/api', () => ({
   createFeedback: vi.fn(),
