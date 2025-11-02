@@ -24,14 +24,14 @@ describe('SubmitFeedback Component', () => {
       target: { value: 'Great product!' },
     });
     fireEvent.change(screen.getByLabelText('Product'), {
-      target: { value: 'prod-123' },
+      target: { value: 'prod-1' },
     });
     fireEvent.click(screen.getByRole('button', { name: /submit feedback/i }));
 
     await waitFor(() =>
       expect(api.createFeedback).toHaveBeenCalledWith({
         text: 'Great product!',
-        product_id: 'prod-123',
+        product_id: 'prod-1',
       })
     );
   });

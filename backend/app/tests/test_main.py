@@ -42,7 +42,7 @@ async def test_create_feedback():
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        data = {"text": "Super Produkt", "product_id": "prod-123"}
+        data = {"text": "Super Produkt", "product_id": "prod-1"}
         response = await ac.post("/api/feedback", json=data)
 
     app.dependency_overrides = {} # reset for other tests

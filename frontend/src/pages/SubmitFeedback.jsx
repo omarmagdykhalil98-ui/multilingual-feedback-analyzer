@@ -67,8 +67,8 @@ const SubmitFeedback = ({ onFeedbackSubmitted }) => {
               onChange={(e) => setProductId(e.target.value)}
             >
               <option value="">Select a product</option>
-              <option value="prod-123">Product 123</option>
-              <option value="prod-456">Product 456</option>
+              <option value="prod-1">product 1</option>
+              <option value="prod-2">product 2</option>
             </select>
           </div>
 

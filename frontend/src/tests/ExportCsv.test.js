@@ -6,7 +6,7 @@ describe('Export CSV Function', () => {
     const mockFeedback = [
       {
         id: 1,
-        product_id: 'prod-123',
+        product_id: 'prod-1',
         text: 'Great product',
         translated_text: 'Super produit',
         detected_language: 'en',
@@ -40,7 +40,7 @@ describe('Export CSV Function', () => {
     const [arg] = unparseSpy.mock.calls[0];
     expect(arg[0]).toMatchObject({
       ID: 1,
-      'Product ID': 'prod-123',
+      'Product ID': 'prod-1',
       'Original Text': 'Great product',
     });
   });
