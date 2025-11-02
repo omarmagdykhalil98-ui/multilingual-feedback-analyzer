@@ -61,10 +61,23 @@ git clone https://github.com/omarmagdykhalil98-ui/multilingual-feedback-analyzer
 cd multilingual-feedback-analyzer
 ```
 
-Set up environment variables:
-```bash
-cp backend/.env.example backend/.env
-```
+### Environment Variables
+
+A pre-configured `.env` file is already included in the backend directory.  
+You can run the app as-is — no setup required.
+
+If you want to use your own credentials (e.g., different Gemini API key or database),  
+you can edit the `.env` file and update the values below:
+
+GEMINI_API_KEY=your_key_here
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=feedback_db
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+DATABASE_URL=postgresql+asyncpg://user:password@db:5432/feedback_db
+
+
 
 Then build and start all services:
 ```bash
