@@ -1,81 +1,84 @@
-# Multilingual Feedback Analyzer
+# 🌍 Multilingual Feedback Analyzer
 
-**Short summary**  
-Multilingual Feedback Analyzer is a small full-stack app that accepts user feedback in multiple languages, automatically detects language, translates feedback to English, classifies sentiment (Positive/Negative/Neutral) using the Gemini model, and provides an analytics dashboard (charts, filters, export CSV). It includes a FastAPI backend, a React + Vite frontend with Tailwind CSS, and PostgreSQL for persistence. The project is containerized with Docker Compose for easy local development and deployment.
+**Short Summary**  
+Multilingual Feedback Analyzer is a full-stack AI-powered application that collects and analyzes user feedback in multiple languages. It automatically detects the language, translates it to English, classifies the sentiment (Positive / Negative / Neutral) using the **Gemini API**, and provides interactive analytics via a modern dashboard.  
+
+It’s built with **FastAPI (backend)**, **React + Tailwind CSS (frontend)**, and **PostgreSQL (database)** — all containerized with **Docker Compose** for seamless local development and deployment.
 
 ---
 
-## Table of contents
+## 📚 Table of Contents
+
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Getting started (local, Docker Compose)](#getting-started-local-docker-compose)
-- [Running in development](#running-in-development)
-- [Running production build (Docker images)](#running-production-build-docker-images)
-- [API routes & usage](#api-routes--usage)
-- [Frontend overview](#frontend-overview)
-- [Backend overview](#backend-overview)
-- [Data schema](#data-schema)
-- [Gemini Studio / Gemini API integration](#gemini-studio--gemini-api-integration)
+- [Getting Started (Local via Docker Compose)](#getting-started-local-via-docker-compose)
+- [Running in Development](#running-in-development)
+- [Running Production Build](#running-production-build)
+- [API Routes & Usage](#api-routes--usage)
+- [Frontend Overview](#frontend-overview)
+- [Backend Overview](#backend-overview)
+- [Data Schema](#data-schema)
+- [Gemini API Integration](#gemini-api-integration)
 - [Testing](#testing)
 - [CI/CD (GitHub Actions)](#cicd-github-actions)
-- [Data persistence expectations](#data-persistence-expectations)
-- [Common issues & troubleshooting](#common-issues--troubleshooting)
-- [Limitations & known issues](#limitations--known-issues)
+- [Data Persistence Expectations](#data-persistence-expectations)
+- [Troubleshooting](#troubleshooting)
+- [Limitations & Known Issues](#limitations--known-issues)
 - [Contributing / Maintainers](#contributing--maintainers)
-- [License](#license)
 
 ---
 
-## Features
-- Submit multilingual feedback (product, free text)
-- Automated detection of language, translation, and sentiment classification using Gemini
-- Aggregated stats and charts (total, sentiment breakdown, language breakdown)
-- Search and product filtering
-- Export filtered feedback to CSV
-- Dockerized backend, frontend and DB
-- Unit tests for frontend (Vitest) and backend (pytest)
+## ✨ Features
+
+- 🌐 Submit multilingual feedback for specific products  
+- 🤖 Automatic **language detection**, **translation**, and **sentiment classification** (via Gemini API)  
+- 📊 Interactive analytics dashboard with sentiment & language breakdowns  
+- 🔍 Filtering and search by product or language  
+- 📁 Export feedback data to CSV  
+- 🧩 Fully containerized (Frontend, Backend, DB)  
+- 🧪 Unit tests for both backend (pytest) and frontend (Vitest)  
+- ⚙️ Integrated CI/CD pipelines with GitHub Actions  
 
 ---
 
-## Prerequisites
-- Docker & Docker Compose (for running locally via containers)
-- Node.js (if running frontend locally without Docker) — Node 22+ recommended
-- Python 3.11+ (if running backend locally without Docker)
-- Gemini API key (set as `GEMINI_API_KEY` in environment)
-- A PostgreSQL user/password/database if not using Docker-managed DB
+## 🧰 Prerequisites
+
+To run the app locally or via Docker:
+
+- [Docker & Docker Compose](https://docs.docker.com/get-docker/)
+- (Optional) Node.js ≥ 22 for frontend local dev
+- (Optional) Python ≥ 3.11 for backend local dev
+- Gemini API key (already embedded for task submission)
+- PostgreSQL credentials (auto-created when using Docker)
 
 ---
 
-## Getting started (local, Docker Compose)
+## 🚀 Getting Started (Local via Docker Compose)
 
-**Clone the master branch of the repo**
+Clone the master branch of the repository:
 ```bash
-git clone <https://github.com/omarmagdykhalil98-ui/multilingual-feedback-analyzer.git>
+git clone https://github.com/omarmagdykhalil98-ui/multilingual-feedback-analyzer.git
 cd multilingual-feedback-analyzer
 ```
 
-**Set up environment variables**
-
-Copy the `.env.example` file in the `backend` directory to `.env` and fill in the required values.
-
+Set up environment variables:
 ```bash
 cp backend/.env.example backend/.env
 ```
 
-**Build and run the services**
-
+Then build and start all services:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:8000`.
+- Frontend → [http://localhost:3000](http://localhost:3000)  
+- Backend API → [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## Running in development
+## 🧑‍💻 Running in Development
 
 **Frontend**
-
 ```bash
 cd frontend
 npm install
@@ -83,7 +86,6 @@ npm run dev
 ```
 
 **Backend**
-
 ```bash
 cd backend
 pip install -r requirements.txt
@@ -92,124 +94,198 @@ uvicorn app.main:app --reload
 
 ---
 
-## Running production build (Docker images)
+## 🏗️ Running Production Build
 
 ```bash
-docker-compose -f docker-compose.prod.yml up --build
+docker compose -f docker-compose.prod.yml up --build
 ```
 
----
-
-## API routes & usage
-
-- `POST /api/feedback`: Submits a new feedback entry.
-  - **Body**: `{"product_id": "string", "original_text": "string"}`
-- `GET /api/feedback`: Retrieves a paginated list of feedback entries with optional filters.
-  - **Query Parameters**: `product_id`, `language`, `sentiment`, `page`, `limit`
-- `GET /api/stats`: Retrieves aggregated feedback statistics.
-- `GET /api/health`: Health check endpoint.
-- `GET /api/model-name`: Returns the name of the Gemini model being used.
+This runs optimized builds of both frontend and backend with persistent database volumes.
 
 ---
 
-## Frontend overview
+## 🧩 API Routes & Usage
 
-The frontend is a React application built with Vite. It uses Tailwind CSS for styling and Recharts for charts.
+### Health Check
+`GET /api/health`  
+→ Returns `{"status": "ok"}`
 
-- **`src/pages`**: Contains the main pages of the application.
-- **`src/components`**: Contains reusable UI components.
-- **`src/services/api.js`**: Handles all communication with the backend API.
-- **`src/hooks`**: Contains custom React hooks.
-- **`src/utils`**: Contains utility functions.
+### Submit Feedback
+`POST /api/feedback`  
+**Body:**
+```json
+{
+  "product_id": "prod-123",
+  "text": "Très bon produit"
+}
+```
+**Response:**
+```json
+{
+  "translated_text": "Very good product",
+  "sentiment": "Positive",
+  "detected_language": "fr"
+}
+```
 
----
+### Get Feedback
+`GET /api/feedback?language=en&sentiment=Positive`
 
-## Backend overview
+### Get Stats
+`GET /api/stats`  
+→ Returns counts for total, sentiment, and languages.
 
-The backend is a FastAPI application that provides a RESTful API for the frontend.
-
-- **`app/main.py`**: The main entry point of the application, containing all the API routes.
-- **`app/crud.py`**: Contains functions for database operations.
-- **`app/models.py`**: Defines the database schema using SQLAlchemy.
-- **`app/schemas.py`**: Defines the Pydantic models for data validation.
-- **`app/gemini_client.py`**: Handles communication with the Gemini API.
-
----
-
-## Data schema
-
-The `feedback` table has the following columns:
-
-- `id`: Primary key
-- `product_id`: String
-- `original_text`: Text
-- `detected_language`: String
-- `translated_text`: Text
-- `sentiment`: String
-- `meta_info`: JSON
-- `created_at`: DateTime
+### Model Info
+`GET /api/model-name`  
+→ Returns `"gemini-2.5-flash"`
 
 ---
 
-## Gemini Studio / Gemini API integration
+## 🎨 Frontend Overview
 
-The backend uses the Gemini API to perform language detection, translation, and sentiment analysis. The `gemini_client.py` file contains the logic for interacting with the Gemini API.
+- **Framework:** React + Vite + Tailwind CSS  
+- **UI Components:** Recharts (for charts), Lucide icons, smooth theme transitions  
+- **Structure:**
+  ```
+  src/
+  ├── components/      # Reusable UI components (Navbar, Sidebar, etc.)
+  ├── pages/           # Main pages (Submit Feedback, Analytics, Settings)
+  ├── services/api.js  # Handles all API calls
+  ├── hooks/           # Custom React hooks (e.g. Dark Mode)
+  └── utils/           # Utility helpers
+  ```
 
 ---
 
-## Testing
+## ⚙️ Backend Overview
 
-**Frontend**
+- **Framework:** FastAPI  
+- **ORM:** SQLAlchemy  
+- **Database:** PostgreSQL  
+- **Structure:**
+  ```
+  app/
+  ├── main.py           # API routes
+  ├── models.py         # SQLAlchemy models
+  ├── schemas.py        # Pydantic validation models
+  ├── crud.py           # Database logic
+  ├── gemini_client.py  # Gemini API integration
+  └── tests/            # Unit tests
+  ```
 
+---
+
+## 🗃️ Data Schema
+
+| Column             | Type        | Description |
+|--------------------|-------------|-------------|
+| `id`               | Integer     | Primary key |
+| `product_id`       | String      | Product identifier |
+| `original_text`    | Text        | Feedback text as submitted |
+| `translated_text`  | Text        | English translation |
+| `detected_language`| String(2)   | Language ISO code |
+| `sentiment`        | String      | Positive / Negative / Neutral |
+| `meta_info`        | JSON        | Additional metadata (optional) |
+| `created_at`       | DateTime    | Timestamp |
+
+---
+
+## 🧠 Gemini API Integration
+
+The Gemini integration is handled in `app/gemini_client.py`.
+
+### Used Gemini Capabilities:
+- **Language Detection**
+- **Translation**
+- **Sentiment Classification**
+
+The model used:  
+
+MODEL_NAME = "gemini-2.5-flash"
+
+
+Requests are made through the official Google `genai` client.  
+Retries and exponential backoff are managed via `tenacity` for reliability.
+
+---
+
+## 🧪 Testing
+
+### Frontend
 ```bash
 cd frontend
 npm test
 ```
 
-**Backend**
-
+### Backend
 ```bash
 cd backend
-pytest
+pytest -v
+```
+
+Both test suites verify:
+- Component rendering
+- API integration logic
+- Successful feedback creation and health checks
+
+---
+
+## ⚡ CI/CD (GitHub Actions)
+
+The repository includes two workflows:
+
+- **ci.yml**
+  - Runs all backend and frontend tests
+  - Builds Docker images
+  - Pushes to Docker Hub on success  
+
+- **cd.yml**
+  - Pulls latest Docker images
+  - Deploys automatically (if configured with SSH credentials)
+
+Secrets required:
+```
+GEMINI_API_KEY
+DOCKERHUB_USERNAME
+DOCKERHUB_TOKEN
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
 ```
 
 ---
 
-## CI/CD (GitHub Actions)
+## 💾 Data Persistence Expectations
 
-The project includes two GitHub Actions workflows:
+The PostgreSQL database uses a named Docker volume (`postgres_data`) to persist feedback across restarts.
 
-- **`ci.yml`**: Runs tests for the frontend and backend on every push and pull request.
-- **`cd.yml`**: Deploys the application to a production environment (this is a placeholder and needs to be configured).
-
----
-
-## Data persistence expectations
-
-The application uses a PostgreSQL database to store feedback data. The data is persisted across container restarts.
+To clean all data:
+```bash
+docker compose down --volumes
+docker compose up --build
+```
 
 ---
 
-## Common issues & troubleshooting
+## 🧩 Troubleshooting
 
-- **CORS errors**: If you are running the frontend and backend on different domains, you may encounter CORS errors. Make sure to configure the `ALLOWED_ORIGINS` in `backend/app/main.py` correctly.
-- **Database connection issues**: Ensure that the database is running and that the `DATABASE_URL` in `backend/.env` is correct.
-
----
-
-## Limitations & known issues
-
-- The translation and sentiment analysis are only as good as the Gemini model.
-- The frontend does not have a complete set of tests.
+| Issue | Possible Cause | Fix |
+|-------|----------------|-----|
+| CORS error | Different ports/domains | Update CORS origins in `app/main.py` |
+| 500 error on feedback | Missing Gemini key | Set `GEMINI_API_KEY` in `.env` |
 
 ---
 
-## Contributing / Maintainers
+## ⚠️ Limitations & Known Issues
 
-This project is maintained by the Gemini team.
+- Translation and sentiment accuracy depend on the Gemini model quality.  
+- Limited error handling for network/API timeouts.  
+- Designed for single-user usage (no auth layer yet).  
 
 ---
 
-## License
+## 👥 Contributing / Maintainers
 
-This project is licensed under the MIT License.
+Maintained by **Omar Magdy Khalil**  
+For any contributions, please fork the repo and open a pull request.
+
