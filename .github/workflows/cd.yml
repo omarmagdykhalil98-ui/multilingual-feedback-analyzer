@@ -2,7 +2,7 @@ name: CD - Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: ["master"]
 
 jobs:
   deploy:
@@ -21,20 +21,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker images
+      - name: Pull latest Docker images
         run: |
-          docker compose build
-          docker tag multilingual-feedback-backend ${{ secrets.DOCKERHUB_USERNAME }}/mfa-backend:latest
-          docker tag multilingual-feedback-frontend ${{ secrets.DOCKERHUB_USERNAME }}/mfa-frontend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mfa-backend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mfa-frontend:latest
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/multilingual-feedback-backend:latest
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/multilingual-feedback-frontend:latest
 
       - name: Deploy via SSH (Optional)
         if: success()
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USER }}/mfa
