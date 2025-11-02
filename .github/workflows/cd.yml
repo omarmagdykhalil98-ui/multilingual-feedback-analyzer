@@ -2,7 +2,7 @@ name: CD - Deploy
 
 on:
   push:
-    branches: ["master"]
+    branches: [ master ]
 
 jobs:
   deploy:
@@ -23,8 +23,8 @@ jobs:
 
       - name: Pull latest Docker images
         run: |
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/multilingual-feedback-backend:latest
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/multilingual-feedback-frontend:latest
+          docker pull omarmagdy1998/multilingual-feedback-backend:latest
+          docker pull omarmagdy1998/multilingual-feedback-frontend:latest
 
       - name: Deploy via SSH (Optional)
         if: success()
