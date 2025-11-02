@@ -5,6 +5,8 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 load_dotenv()
 
+MODEL_NAME = "gemini-2.5-flash"
+
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 # --- Retry Wrapper ---
@@ -12,7 +14,7 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 def _generate_content_with_retry(prompt: str) -> str:
     """Generate content with automatic retry and error handling."""
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model=MODEL_NAME,
         contents=prompt
     )
     return response.text.strip()
@@ -55,3 +57,6 @@ def detect_translate_and_sentiment(text: str, target_language: str = "en") -> di
 def generate_itinerary(destination, days):
     prompt = f"Generate a {days}-day travel itinerary for {destination}."
     return _generate_content_with_retry(prompt)
+
+def get_model_name():
+    return MODEL_NAME

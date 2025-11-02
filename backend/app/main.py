@@ -57,24 +57,21 @@ async def get_db() -> AsyncSession:
 
 
 # --- Endpoints ---
-@app.post("/generate-itinerary/", response_model=schemas.Itinerary)
-async def create_itinerary(request: schemas.ItineraryRequest):
-    try:
-        itinerary_text = await gemini_client.generate_itinerary(request.destination, request.days)
-        return schemas.Itinerary(destination=request.destination, days=request.days, itinerary=itinerary_text)
-    except Exception as e:
-        logger.error(f"Error creating itinerary: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate itinerary.")
-
+def get_gemini_client():
+    return gemini_client.detect_translate_and_sentiment
 
 @app.post("/api/feedback", response_model=schemas.Feedback)
-async def create_feedback(feedback: schemas.FeedbackCreate, db: AsyncSession = Depends(get_db)):
+async def create_feedback(
+    feedback: schemas.FeedbackCreate,
+    db: AsyncSession = Depends(get_db),
+    gemini_func: callable = Depends(get_gemini_client)
+):
     try:
         # Run the sync Gemini call in a background thread (non-blocking)
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             None,
-            lambda: gemini_client.detect_translate_and_sentiment(feedback.original_text)
+            lambda: gemini_func(feedback.original_text)
         )
 
         return await crud.create_feedback(
@@ -112,3 +109,11 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
     except Exception as e:
         logger.error(f"Error getting stats: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve stats.")
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok"}
+
+@app.get("/api/model-name")
+async def get_model_name():
+    return {"model_name": gemini_client.get_model_name()}

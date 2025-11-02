@@ -8,3 +8,7 @@ asyncpg
 pydantic==2.8.2
 packaging>=23.0
 importlib-metadata>=6.0
+aiosqlite
+pytest
+pytest-asyncio
+httpx
