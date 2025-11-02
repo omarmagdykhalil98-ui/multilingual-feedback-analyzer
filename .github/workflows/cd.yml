@@ -25,15 +25,3 @@ jobs:
         run: |
           docker pull omarmagdy1998/multilingual-feedback-backend:latest
           docker pull omarmagdy1998/multilingual-feedback-frontend:latest
-
-      - name: Deploy via SSH (Optional)
-        if: success()
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /home/${{ secrets.SERVER_USER }}/mfa
-            docker compose pull
-            docker compose up -d --force-recreate
